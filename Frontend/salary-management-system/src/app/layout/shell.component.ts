@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ToastService } from '../core/toast.service';
 
 @Component({
   selector: 'app-shell',
@@ -7,4 +8,6 @@ import { Component } from '@angular/core';
 })
 export class ShellComponent {
   readonly persona = 'HR Manager';
+
+  constructor(readonly toasts: ToastService) {}
 }

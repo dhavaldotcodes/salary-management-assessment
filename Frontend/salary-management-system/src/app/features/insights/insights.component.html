@@ -11,14 +11,13 @@
 </section>
 
 <p class="banner error" *ngIf="error">{{ error }}</p>
-<p class="banner" *ngIf="loading">Loading org-wide compensation…</p>
 
 <ng-container *ngIf="insights && !loading">
   <section class="kpis">
     <article>
       <span>Active employees</span>
       <strong>{{ insights.activeHeadcount | number }}</strong>
-      <em>{{ insights.inactiveHeadcount | number }} inactive excluded from payroll</em>
+      <em>On active payroll</em>
     </article>
     <article>
       <span>Payroll (USD, approx.)</span>

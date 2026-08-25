@@ -18,3 +18,8 @@
 <main class="page">
   <router-outlet></router-outlet>
 </main>
+<div class="toasts" *ngIf="toasts.messages$ | async as messages">
+  <div class="toast" *ngFor="let toast of messages" [class.error]="toast.kind === 'error'">
+    {{ toast.message }}
+  </div>
+</div>

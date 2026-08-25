@@ -61,7 +61,7 @@ public class EmployeeService {
 
     @Transactional(readOnly = true)
     public EmployeeResponse get(Long id) {
-        return EmployeeResponse.from(requireEmployee(id), fxService.converter());
+        return EmployeeResponse.from(requireActiveEmployee(id), fxService.converter());
     }
 
     @Transactional
@@ -81,7 +81,7 @@ public class EmployeeService {
 
     @Transactional
     public EmployeeResponse update(Long id, EmployeeRequest request) {
-        Employee employee = requireEmployee(id);
+        Employee employee = requireActiveEmployee(id);
         FxConverter fx = fxService.converter();
         validateCatalog(request, fx);
         String email = normalizeEmail(request.email());
@@ -125,15 +125,21 @@ public class EmployeeService {
         employee.setBonus(request.bonus() == null ? BigDecimal.ZERO : request.bonus());
         employee.setEffectiveDate(request.effectiveDate());
         if (creating) {
-            employee.setStatus(request.status() == null ? EmploymentStatus.ACTIVE : request.status());
-        } else if (request.status() != null) {
-            employee.setStatus(request.status());
+            employee.setStatus(EmploymentStatus.ACTIVE);
         }
     }
 
     private Employee requireEmployee(Long id) {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
+    }
+
+    private Employee requireActiveEmployee(Long id) {
+        Employee employee = requireEmployee(id);
+        if (employee.getStatus() != EmploymentStatus.ACTIVE) {
+            throw new EmployeeNotFoundException(id);
+        }
+        return employee;
     }
 
     private String nextEmployeeCode() {

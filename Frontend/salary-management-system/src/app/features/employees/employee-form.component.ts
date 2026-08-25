@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LookupResponse } from '../../core/models';
 import { EmployeeApiService } from '../../core/employee-api.service';
+import { ToastService } from '../../core/toast.service';
 import { currencyForCountry } from '../../core/country-currency';
 
 @Component({
@@ -18,7 +19,6 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
   readonly fallbackLevels = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6'];
   id: number | null = null;
   loading = false;
-  error: string | null = null;
 
   private suppressCurrencySync = false;
   private readonly destroy$ = new Subject<void>();
@@ -26,6 +26,7 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private employeeApi: EmployeeApiService,
+    private toasts: ToastService,
     private route: ActivatedRoute,
     private router: Router
   ) {
@@ -87,7 +88,7 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
           this.loading = false;
         },
         error: () => {
-          this.error = 'Employee not found.';
+          this.toasts.error('Employee not found.');
           this.loading = false;
         }
       });
@@ -110,17 +111,19 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
       return;
     }
     this.loading = true;
-    this.error = null;
     const body = this.form.value;
     const request$ = this.isEdit
       ? this.employeeApi.update(this.id as number, body)
       : this.employeeApi.create(body);
 
     request$.subscribe({
-      next: () => this.router.navigate(['/employees']),
+      next: () => {
+        this.toasts.success(this.isEdit ? 'Employee updated.' : 'Employee added.');
+        this.router.navigate(['/employees']);
+      },
       error: (err) => {
         this.loading = false;
-        this.error = err?.error?.message || 'Could not save this employee.';
+        this.toasts.error(err?.error?.message || 'Could not save this employee.');
       }
     });
   }

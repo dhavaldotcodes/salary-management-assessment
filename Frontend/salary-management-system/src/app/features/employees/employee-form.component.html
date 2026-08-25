@@ -6,9 +6,6 @@
   </div>
 </section>
 
-<p class="banner error" *ngIf="error">{{ error }}</p>
-<p class="banner" *ngIf="loading && isEdit">Loading employee…</p>
-
 <form class="card form" [formGroup]="form" (ngSubmit)="save()">
   <div class="row">
     <label>First name
@@ -58,12 +55,6 @@
   <div class="row">
     <label>Effective date
       <input type="date" formControlName="effectiveDate">
-    </label>
-    <label *ngIf="isEdit">Status
-      <select formControlName="status">
-        <option value="ACTIVE">Active</option>
-        <option value="INACTIVE">Inactive</option>
-      </select>
     </label>
   </div>
   <div class="actions">

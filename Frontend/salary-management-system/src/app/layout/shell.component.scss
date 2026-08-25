@@ -75,3 +75,29 @@ nav a:hover {
   margin: 0 auto;
   padding: 1.5rem 1.25rem 3rem;
 }
+
+.toasts {
+  position: fixed;
+  top: 4.5rem;
+  right: 1.25rem;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: min(22rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.toast {
+  background: #0f7a4a;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.55rem;
+  box-shadow: 0 8px 24px rgba(15, 39, 68, 0.22);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.toast.error {
+  background: #b42318;
+}

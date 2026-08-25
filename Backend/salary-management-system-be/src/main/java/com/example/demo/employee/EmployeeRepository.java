@@ -15,12 +15,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
 
     Optional<Employee> findTopByOrderByEmployeeCodeDesc();
 
-    @Query("select distinct e.country from Employee e order by e.country")
+    @Query("select distinct e.country from Employee e where e.status = com.example.demo.employee.EmploymentStatus.ACTIVE order by e.country")
     List<String> findDistinctCountries();
 
-    @Query("select distinct e.department from Employee e order by e.department")
+    @Query("select distinct e.department from Employee e where e.status = com.example.demo.employee.EmploymentStatus.ACTIVE order by e.department")
     List<String> findDistinctDepartments();
 
-    @Query("select distinct e.jobLevel from Employee e order by e.jobLevel")
+    @Query("select distinct e.jobLevel from Employee e where e.status = com.example.demo.employee.EmploymentStatus.ACTIVE order by e.jobLevel")
     List<String> findDistinctJobLevels();
 }

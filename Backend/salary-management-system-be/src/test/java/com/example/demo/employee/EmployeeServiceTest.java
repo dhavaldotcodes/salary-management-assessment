@@ -145,6 +145,27 @@ class EmployeeServiceTest {
         assertThrows(EmployeeNotFoundException.class, () -> employeeService.get(99L));
     }
 
+    @Test
+    void getHidesDeactivatedEmployee() {
+        Employee employee = new Employee();
+        employee.setId(9L);
+        employee.setEmployeeCode("ACME-00009");
+        employee.setFirstName("Ada");
+        employee.setLastName("Lovelace");
+        employee.setEmail("ada.lovelace@acme.example");
+        employee.setCountry("US");
+        employee.setDepartment("Engineering");
+        employee.setJobLevel("L4");
+        employee.setStatus(EmploymentStatus.INACTIVE);
+        employee.setBaseSalary(new BigDecimal("90000"));
+        employee.setCurrency("USD");
+        employee.setBonus(BigDecimal.ZERO);
+        employee.setEffectiveDate(LocalDate.of(2026, 1, 1));
+        when(employeeRepository.findById(9L)).thenReturn(Optional.of(employee));
+
+        assertThrows(EmployeeNotFoundException.class, () -> employeeService.get(9L));
+    }
+
     private static EmployeeRequest sampleRequest(String currency, BigDecimal salary) {
         return new EmployeeRequest(
                 "Ada",

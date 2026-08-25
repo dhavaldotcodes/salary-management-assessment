@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Employee, LookupResponse } from '../../core/models';
 import { EmployeeApiService } from '../../core/employee-api.service';
+import { ToastService } from '../../core/toast.service';
 import { formatMoney, formatUsd } from '../../core/format-money';
 
 @Component({
@@ -20,15 +21,15 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   country = '';
   department = '';
   jobLevel = '';
-  status = 'ACTIVE';
   loading = false;
-  error: string | null = null;
-  notice: string | null = null;
 
   private readonly search$ = new Subject<string>();
   private readonly destroy$ = new Subject<void>();
 
-  constructor(private employeeApi: EmployeeApiService) {}
+  constructor(
+    private employeeApi: EmployeeApiService,
+    private toasts: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.employeeApi.lookups().subscribe((lookups) => this.lookups = lookups);
@@ -65,13 +66,12 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   load(): void {
     this.loading = true;
-    this.error = null;
     this.employeeApi.search({
       search: this.search || undefined,
       country: this.country || undefined,
       department: this.department || undefined,
       jobLevel: this.jobLevel || undefined,
-      status: this.status || undefined,
+      status: 'ACTIVE',
       page: this.page,
       size: this.size
     }).subscribe({
@@ -81,7 +81,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: () => {
-        this.error = 'Could not load employees. Is the API running on port 8080?';
+        this.toasts.error('Could not load employees. Is the API running on port 8080?');
         this.loading = false;
       }
     });
@@ -112,10 +112,10 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     }
     this.employeeApi.deactivate(employee.id).subscribe({
       next: () => {
-        this.notice = `${name} is now inactive.`;
+        this.toasts.success(`${name} is now inactive.`);
         this.load();
       },
-      error: () => this.error = 'Could not deactivate this employee.'
+      error: () => this.toasts.error('Could not deactivate this employee.')
     });
   }
 
