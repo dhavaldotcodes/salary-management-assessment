@@ -13,6 +13,7 @@ import java.util.Map;
 public class FxService {
 
     private final FxRateRepository fxRateRepository;
+    private volatile Snapshot snapshot;
 
     public FxService(FxRateRepository fxRateRepository) {
         this.fxRateRepository = fxRateRepository;
@@ -20,22 +21,36 @@ public class FxService {
 
     @Transactional(readOnly = true)
     public FxConverter converter() {
-        Map<String, BigDecimal> rates = new LinkedHashMap<>();
-        LocalDate latest = null;
-        for (FxRate rate : fxRateRepository.findAll()) {
-            rates.put(rate.getCurrency(), rate.getUsdRate());
-            if (latest == null || rate.getAsOfDate().isAfter(latest)) {
-                latest = rate.getAsOfDate();
-            }
-        }
-        return new FxConverter(rates);
+        return load().converter();
     }
 
     @Transactional(readOnly = true)
     public LocalDate asOfDate() {
-        return fxRateRepository.findAll().stream()
-                .map(FxRate::getAsOfDate)
-                .max(LocalDate::compareTo)
-                .orElse(LocalDate.of(2026, 1, 1));
+        return load().asOfDate();
+    }
+
+    private Snapshot load() {
+        Snapshot cached = snapshot;
+        if (cached != null) {
+            return cached;
+        }
+        synchronized (this) {
+            if (snapshot != null) {
+                return snapshot;
+            }
+            Map<String, BigDecimal> rates = new LinkedHashMap<>();
+            LocalDate latest = LocalDate.of(2026, 1, 1);
+            for (FxRate rate : fxRateRepository.findAll()) {
+                rates.put(rate.getCurrency(), rate.getUsdRate());
+                if (rate.getAsOfDate().isAfter(latest)) {
+                    latest = rate.getAsOfDate();
+                }
+            }
+            snapshot = new Snapshot(new FxConverter(rates), latest);
+            return snapshot;
+        }
+    }
+
+    private record Snapshot(FxConverter converter, LocalDate asOfDate) {
     }
 }

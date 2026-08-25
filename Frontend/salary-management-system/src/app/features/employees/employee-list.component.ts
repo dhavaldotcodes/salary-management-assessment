@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Employee, LookupResponse } from '../../core/models';
 import { EmployeeApiService } from '../../core/employee-api.service';
+import { formatMoney, formatUsd } from '../../core/format-money';
 
 @Component({
   selector: 'app-employee-list',
@@ -119,14 +120,10 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   money(value: number, currency: string): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency,
-      maximumFractionDigits: 0
-    }).format(value || 0);
+    return formatMoney(value, currency);
   }
 
   usd(value: number): string {
-    return this.money(value, 'USD');
+    return formatUsd(value);
   }
 }

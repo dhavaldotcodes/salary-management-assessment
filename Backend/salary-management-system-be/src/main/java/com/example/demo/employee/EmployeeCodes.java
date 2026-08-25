@@ -29,7 +29,7 @@ public final class EmployeeCodes {
         }
     }
 
-    static String format(int number) {
+    public static String format(int number) {
         return "ACME-%05d".formatted(Math.max(number, 1));
     }
 }

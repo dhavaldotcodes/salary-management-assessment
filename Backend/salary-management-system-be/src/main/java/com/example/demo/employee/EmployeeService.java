@@ -22,6 +22,7 @@ import java.util.Locale;
 @Service
 public class EmployeeService {
 
+    static final int DEFAULT_PAGE_SIZE = 25;
     private static final int MAX_PAGE_SIZE = 100;
 
     private final EmployeeRepository employeeRepository;
@@ -60,15 +61,13 @@ public class EmployeeService {
 
     @Transactional(readOnly = true)
     public EmployeeResponse get(Long id) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException(id));
-        return EmployeeResponse.from(employee, fxService.converter());
+        return EmployeeResponse.from(requireEmployee(id), fxService.converter());
     }
 
     @Transactional
     public EmployeeResponse create(EmployeeRequest request) {
         FxConverter fx = fxService.converter();
-        validateCurrency(fx, request.currency());
+        validateCatalog(request, fx);
         String email = normalizeEmail(request.email());
         if (employeeRepository.existsByEmailIgnoreCase(email)) {
             throw new DuplicateEmailException(email);
@@ -82,10 +81,9 @@ public class EmployeeService {
 
     @Transactional
     public EmployeeResponse update(Long id, EmployeeRequest request) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException(id));
+        Employee employee = requireEmployee(id);
         FxConverter fx = fxService.converter();
-        validateCurrency(fx, request.currency());
+        validateCatalog(request, fx);
         String email = normalizeEmail(request.email());
         if (employeeRepository.existsByEmailIgnoreCaseAndIdNot(email, id)) {
             throw new DuplicateEmailException(email);
@@ -96,8 +94,7 @@ public class EmployeeService {
 
     @Transactional
     public EmployeeResponse deactivate(Long id) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException(id));
+        Employee employee = requireEmployee(id);
         employee.setStatus(EmploymentStatus.INACTIVE);
         return EmployeeResponse.from(employeeRepository.save(employee), fxService.converter());
     }
@@ -134,6 +131,11 @@ public class EmployeeService {
         }
     }
 
+    private Employee requireEmployee(Long id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException(id));
+    }
+
     private String nextEmployeeCode() {
         return EmployeeCodes.next(
                 employeeRepository.findTopByOrderByEmployeeCodeDesc()
@@ -142,9 +144,15 @@ public class EmployeeService {
         );
     }
 
-    private static void validateCurrency(FxConverter fx, String currency) {
-        if (!fx.supports(currency)) {
-            throw new UnknownCurrencyException(currency);
+    private static void validateCatalog(EmployeeRequest request, FxConverter fx) {
+        if (!OrgCatalog.isKnownCountry(request.country())) {
+            throw new InvalidEmployeeDataException("Unsupported country: " + request.country());
+        }
+        if (!OrgCatalog.isKnownJobLevel(request.jobLevel())) {
+            throw new InvalidEmployeeDataException("Job level must be L1–L6");
+        }
+        if (!fx.supports(request.currency())) {
+            throw new UnknownCurrencyException(request.currency());
         }
     }
 
@@ -154,7 +162,7 @@ public class EmployeeService {
 
     private static int clampSize(int size) {
         if (size < 1) {
-            return 25;
+            return DEFAULT_PAGE_SIZE;
         }
         return Math.min(size, MAX_PAGE_SIZE);
     }

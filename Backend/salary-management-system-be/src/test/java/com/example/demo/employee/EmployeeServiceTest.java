@@ -59,6 +59,24 @@ class EmployeeServiceTest {
     }
 
     @Test
+    void createRejectsUnknownCountry() {
+        EmployeeRequest request = new EmployeeRequest(
+                "Ada",
+                "Lovelace",
+                "ada.lovelace@acme.example",
+                "ZZ",
+                "Engineering",
+                "L4",
+                new BigDecimal("90000"),
+                "USD",
+                BigDecimal.ZERO,
+                LocalDate.of(2026, 1, 1),
+                null
+        );
+        assertThrows(InvalidEmployeeDataException.class, () -> employeeService.create(request));
+    }
+
+    @Test
     void createRejectsUnknownCurrency() {
         EmployeeRequest request = sampleRequest("XXX", new BigDecimal("90000"));
         assertThrows(UnknownCurrencyException.class, () -> employeeService.create(request));

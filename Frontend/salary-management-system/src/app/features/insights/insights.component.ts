@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GroupStat, InsightResponse } from '../../core/models';
 import { InsightApiService } from '../../core/insight-api.service';
+import { formatUsd } from '../../core/format-money';
 
 @Component({
   selector: 'app-insights',
@@ -33,10 +34,6 @@ export class InsightsComponent implements OnInit {
   }
 
   money(value: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0
-    }).format(value || 0);
+    return formatUsd(value);
   }
 }

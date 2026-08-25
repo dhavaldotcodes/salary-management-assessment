@@ -2,8 +2,10 @@ package com.example.demo.config;
 
 import com.example.demo.domain.FxConverter;
 import com.example.demo.employee.Employee;
+import com.example.demo.employee.EmployeeCodes;
 import com.example.demo.employee.EmployeeRepository;
 import com.example.demo.employee.EmploymentStatus;
+import com.example.demo.employee.OrgCatalog;
 import com.example.demo.fx.FxRate;
 import com.example.demo.fx.FxRateRepository;
 import org.slf4j.Logger;
@@ -42,27 +44,6 @@ public class DataSeeder implements ApplicationRunner {
             "Khan", "Martin", "Santos", "Ali", "Johansson", "Rossi", "Novak", "Okafor", "Walsh", "Chen",
             "Dubois", "Kowalski", "Andersen", "Lopez", "Ito", "Berg", "Nair", "Fischer", "Hassan", "Murray"
     };
-    private static final String[] DEPARTMENTS = {
-            "Engineering", "Product", "Sales", "Marketing", "Finance", "People", "Operations",
-            "Customer Support", "Legal", "Design"
-    };
-    private static final String[] LEVELS = {"L1", "L2", "L3", "L4", "L5", "L6"};
-
-    private static final Map<String, String> COUNTRY_CURRENCY = Map.ofEntries(
-            Map.entry("US", "USD"),
-            Map.entry("IN", "INR"),
-            Map.entry("GB", "GBP"),
-            Map.entry("DE", "EUR"),
-            Map.entry("FR", "EUR"),
-            Map.entry("NL", "EUR"),
-            Map.entry("IE", "EUR"),
-            Map.entry("SG", "SGD"),
-            Map.entry("AU", "AUD"),
-            Map.entry("CA", "CAD"),
-            Map.entry("JP", "JPY"),
-            Map.entry("BR", "BRL"),
-            Map.entry("CH", "CHF")
-    );
 
     private static final String[] COUNTRY_WEIGHTS = {
             "US", "US", "US", "IN", "IN", "GB", "DE", "FR", "SG", "AU", "CA", "JP", "BR", "NL", "IE", "CH"
@@ -140,7 +121,7 @@ public class DataSeeder implements ApplicationRunner {
 
     private Employee buildEmployee(int index, Random random, FxConverter fx) {
         String country = COUNTRY_WEIGHTS[random.nextInt(COUNTRY_WEIGHTS.length)];
-        String currency = COUNTRY_CURRENCY.get(country);
+        String currency = OrgCatalog.currencyFor(country);
         String first = FIRST_NAMES[random.nextInt(FIRST_NAMES.length)];
         String last = LAST_NAMES[random.nextInt(LAST_NAMES.length)];
         String level = weightedLevel(random);
@@ -154,7 +135,7 @@ public class DataSeeder implements ApplicationRunner {
         }
 
         Employee employee = new Employee();
-        employee.setEmployeeCode("ACME-%05d".formatted(index));
+        employee.setEmployeeCode(EmployeeCodes.format(index));
         employee.setFirstName(first);
         employee.setLastName(last);
         employee.setEmail("%s.%s.%d@acme.example".formatted(first.toLowerCase(), last.toLowerCase(), index));
