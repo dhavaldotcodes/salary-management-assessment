@@ -39,34 +39,40 @@
 
   <p class="disclaimer">{{ insights.disclaimer }}</p>
 
-  <div class="grid">
-    <section class="card" *ngFor="let block of [
-      { title: 'By country', rows: insights.byCountry },
-      { title: 'By department', rows: insights.byDepartment },
-      { title: 'By job level', rows: insights.byJobLevel }
-    ]">
-      <h2>{{ block.title }}</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Group</th>
-            <th>People</th>
-            <th>Payroll USD</th>
-            <th>Median</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of block.rows">
-            <td>
-              <div class="label">{{ row.key }}</div>
-              <div class="bar"><span [style.width]="barWidth(row, block.rows)"></span></div>
-            </td>
-            <td>{{ row.headcount | number }}</td>
-            <td>{{ money(row.payrollUsd) }}</td>
-            <td>{{ money(row.medianUsd) }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  </div>
+  <section class="card">
+    <div class="card-head">
+      <h2>Payroll breakdown</h2>
+      <label>
+        Group by
+        <select [(ngModel)]="groupBy" name="groupBy">
+          <option value="country">Country</option>
+          <option value="department">Department</option>
+          <option value="jobLevel">Job level</option>
+        </select>
+      </label>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>{{ groupLabel }}</th>
+          <th>People</th>
+          <th>Payroll USD</th>
+          <th>Average</th>
+          <th>Median</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows">
+          <td>
+            <div class="label">{{ row.key }}</div>
+            <div class="bar"><span [style.width]="barWidth(row)"></span></div>
+          </td>
+          <td>{{ row.headcount | number }}</td>
+          <td>{{ money(row.payrollUsd) }}</td>
+          <td>{{ money(row.averageUsd) }}</td>
+          <td>{{ money(row.medianUsd) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 </ng-container>
