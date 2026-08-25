@@ -18,6 +18,13 @@ Web app for an HR manager to maintain compensation for ~10,000 employees and ans
 **Postgres** with database `salary_management`, user/password `postgres` / `postgres` (see `Backend/salary-management-system-be/src/main/resources/application.properties`).
 
 ```bash
+# optional: local Postgres via Docker
+docker compose up -d
+```
+
+Database URL, user, password, and CORS origins can be overridden with `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, and `CORS_ORIGINS`.
+
+```bash
 # API — seeds 10,000 employees on first empty database
 cd Backend/salary-management-system-be
 ./mvnw spring-boot:run

@@ -57,6 +57,11 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     this.load();
   }
 
+  onPageSizeChange(): void {
+    this.page = 0;
+    this.load();
+  }
+
   load(): void {
     this.loading = true;
     this.error = null;

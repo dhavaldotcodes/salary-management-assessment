@@ -135,10 +135,11 @@ public class EmployeeService {
     }
 
     private String nextEmployeeCode() {
-        long next = employeeRepository.findTopByOrderByIdDesc()
-                .map(Employee::getId)
-                .orElse(0L) + 1;
-        return "ACME-%05d".formatted(next);
+        return EmployeeCodes.next(
+                employeeRepository.findTopByOrderByEmployeeCodeDesc()
+                        .map(Employee::getEmployeeCode)
+                        .orElse(null)
+        );
     }
 
     private static void validateCurrency(FxConverter fx, String currency) {

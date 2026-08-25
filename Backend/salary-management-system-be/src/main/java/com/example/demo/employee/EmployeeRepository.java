@@ -13,7 +13,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 
-    Optional<Employee> findTopByOrderByIdDesc();
+    Optional<Employee> findTopByOrderByEmployeeCodeDesc();
 
     @Query("select distinct e.country from Employee e order by e.country")
     List<String> findDistinctCountries();

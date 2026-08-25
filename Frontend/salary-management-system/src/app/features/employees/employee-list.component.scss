@@ -103,6 +103,18 @@ a {
   color: #526277;
 }
 
+.page-size {
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+}
+
+.page-size select {
+  padding: 0.3rem 0.45rem;
+}
+
 .pager button:disabled {
   color: #a9b6c4;
   cursor: default;

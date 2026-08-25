@@ -68,7 +68,7 @@ class EmployeeServiceTest {
     void createAssignsEmployeeCodeAndNormalizesEmail() {
         EmployeeRequest request = sampleRequest("USD", new BigDecimal("90000"));
         when(employeeRepository.existsByEmailIgnoreCase("ada.lovelace@acme.example")).thenReturn(false);
-        when(employeeRepository.findTopByOrderByIdDesc()).thenReturn(Optional.empty());
+        when(employeeRepository.findTopByOrderByEmployeeCodeDesc()).thenReturn(Optional.empty());
         when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> {
             Employee employee = invocation.getArgument(0);
             employee.setId(1L);

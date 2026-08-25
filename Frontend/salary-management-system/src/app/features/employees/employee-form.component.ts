@@ -1,21 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { LookupResponse } from '../../core/models';
 import { EmployeeApiService } from '../../core/employee-api.service';
+import { currencyForCountry } from '../../core/country-currency';
 
 @Component({
   selector: 'app-employee-form',
   templateUrl: './employee-form.component.html',
   styleUrls: ['./employee-form.component.scss']
 })
-export class EmployeeFormComponent implements OnInit {
+export class EmployeeFormComponent implements OnInit, OnDestroy {
   form: FormGroup;
   lookups: LookupResponse = { countries: [], departments: [], jobLevels: [], currencies: [] };
   readonly fallbackLevels = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6'];
   id: number | null = null;
   loading = false;
   error: string | null = null;
+
+  private suppressCurrencySync = false;
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -43,6 +49,16 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.form.get('country')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((country: string) => {
+      if (this.suppressCurrencySync) {
+        return;
+      }
+      const currency = currencyForCountry(country);
+      if (currency) {
+        this.form.patchValue({ currency });
+      }
+    });
+
     this.employeeApi.lookups().subscribe((lookups) => {
       this.lookups = lookups;
     });
@@ -53,6 +69,7 @@ export class EmployeeFormComponent implements OnInit {
       this.loading = true;
       this.employeeApi.get(this.id).subscribe({
         next: (employee) => {
+          this.suppressCurrencySync = true;
           this.form.patchValue({
             firstName: employee.firstName,
             lastName: employee.lastName,
@@ -66,6 +83,7 @@ export class EmployeeFormComponent implements OnInit {
             effectiveDate: employee.effectiveDate,
             status: employee.status
           });
+          this.suppressCurrencySync = false;
           this.loading = false;
         },
         error: () => {
@@ -74,6 +92,16 @@ export class EmployeeFormComponent implements OnInit {
         }
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  invalid(control: string): boolean {
+    const field = this.form.get(control);
+    return !!field && field.invalid && field.touched;
   }
 
   save(): void {
