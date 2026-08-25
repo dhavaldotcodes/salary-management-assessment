@@ -1,0 +1,151 @@
+.intro {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.intro h1 {
+  margin: 0.15rem 0 0.4rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #2f6fed;
+  margin: 0;
+}
+
+.lede,
+.muted,
+.meta {
+  color: #526277;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 2fr repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+input,
+select,
+button,
+.btn {
+  font: inherit;
+}
+
+input,
+select {
+  border: 1px solid #d5dee8;
+  border-radius: 0.65rem;
+  padding: 0.55rem 0.7rem;
+  background: #fff;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e4eaf1;
+  border-radius: 0.85rem;
+  padding: 0.4rem 1rem 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.7rem 0.5rem;
+  border-top: 1px solid #eef2f6;
+  vertical-align: top;
+}
+
+th {
+  color: #6b7c8f;
+  font-size: 0.8rem;
+}
+
+a {
+  color: #123a6b;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.actions {
+  display: flex;
+  gap: 0.7rem;
+  white-space: nowrap;
+}
+
+.link,
+.pager button {
+  background: none;
+  border: 0;
+  color: #2f6fed;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 600;
+}
+
+.pager {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.8rem 0 0.2rem;
+  color: #526277;
+}
+
+.pager button:disabled {
+  color: #a9b6c4;
+  cursor: default;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.55rem 0.95rem;
+}
+
+.btn.primary {
+  background: #2f6fed;
+  color: #fff;
+}
+
+.banner {
+  background: #fff;
+  border: 1px solid #e4eaf1;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+.banner.error {
+  color: #9b1c1c;
+  border-color: #f3c4c4;
+  background: #fff5f5;
+}
+
+.banner.ok {
+  color: #0f6b43;
+  border-color: #b7e4cd;
+  background: #f1fbf6;
+}
+
+@media (max-width: 900px) {
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .intro {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

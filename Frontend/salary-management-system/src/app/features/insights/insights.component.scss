@@ -1,0 +1,107 @@
+.intro h1,
+.card h2 {
+  margin: 0.15rem 0 0.4rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #2f6fed;
+  margin: 0;
+}
+
+.lede,
+.disclaimer,
+.banner {
+  color: #526277;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.85rem;
+  margin: 1.1rem 0;
+}
+
+.kpis article,
+.card,
+.banner {
+  background: #fff;
+  border: 1px solid #e4eaf1;
+  border-radius: 0.85rem;
+  padding: 1rem 1.1rem;
+}
+
+.kpis span,
+.kpis em {
+  display: block;
+  color: #6b7c8f;
+  font-size: 0.8rem;
+  font-style: normal;
+}
+
+.kpis strong {
+  display: block;
+  font-size: 1.45rem;
+  margin: 0.35rem 0;
+}
+
+.disclaimer {
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.card h2 {
+  font-size: 1.05rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th {
+  text-align: left;
+  color: #6b7c8f;
+  font-weight: 600;
+  padding: 0.45rem 0;
+}
+
+td {
+  padding: 0.55rem 0.4rem 0.55rem 0;
+  border-top: 1px solid #eef2f6;
+  vertical-align: middle;
+}
+
+.bar {
+  height: 0.38rem;
+  background: #eef3f8;
+  border-radius: 999px;
+  margin-top: 0.35rem;
+  overflow: hidden;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: #2f6fed;
+  border-radius: 999px;
+}
+
+.banner.error {
+  color: #9b1c1c;
+  border-color: #f3c4c4;
+  background: #fff5f5;
+}
+
+.label {
+  font-weight: 600;
+}

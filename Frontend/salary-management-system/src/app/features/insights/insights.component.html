@@ -1,0 +1,72 @@
+<section class="intro">
+  <div>
+    <p class="eyebrow">How ACME pays people</p>
+    <h1>Pay insights</h1>
+    <p class="lede">
+      Active payroll converted to USD with a static FX table
+      <span *ngIf="insights">(as of {{ insights.fxAsOf }})</span>.
+      Local contracts stay in local currency on the employee record.
+    </p>
+  </div>
+</section>
+
+<p class="banner error" *ngIf="error">{{ error }}</p>
+<p class="banner" *ngIf="loading">Loading org-wide compensation…</p>
+
+<ng-container *ngIf="insights && !loading">
+  <section class="kpis">
+    <article>
+      <span>Active employees</span>
+      <strong>{{ insights.activeHeadcount | number }}</strong>
+      <em>{{ insights.inactiveHeadcount | number }} inactive excluded from payroll</em>
+    </article>
+    <article>
+      <span>Payroll (USD, approx.)</span>
+      <strong>{{ money(insights.payrollUsd) }}</strong>
+      <em>Base + bonus, FX as of {{ insights.fxAsOf }}</em>
+    </article>
+    <article>
+      <span>Average total comp</span>
+      <strong>{{ money(insights.averageCompensationUsd) }}</strong>
+      <em>Per active employee, USD</em>
+    </article>
+    <article>
+      <span>Median total comp</span>
+      <strong>{{ money(insights.medianCompensationUsd) }}</strong>
+      <em>Less skewed by senior outliers</em>
+    </article>
+  </section>
+
+  <p class="disclaimer">{{ insights.disclaimer }}</p>
+
+  <div class="grid">
+    <section class="card" *ngFor="let block of [
+      { title: 'By country', rows: insights.byCountry },
+      { title: 'By department', rows: insights.byDepartment },
+      { title: 'By job level', rows: insights.byJobLevel }
+    ]">
+      <h2>{{ block.title }}</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Group</th>
+            <th>People</th>
+            <th>Payroll USD</th>
+            <th>Median</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of block.rows">
+            <td>
+              <div class="label">{{ row.key }}</div>
+              <div class="bar"><span [style.width]="barWidth(row, block.rows)"></span></div>
+            </td>
+            <td>{{ row.headcount | number }}</td>
+            <td>{{ money(row.payrollUsd) }}</td>
+            <td>{{ money(row.medianUsd) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</ng-container>

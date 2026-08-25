@@ -1,0 +1,20 @@
+<header class="topbar">
+  <div class="brand">
+    <span class="mark">ACME</span>
+    <div>
+      <strong>Compensation</strong>
+      <p>Salary management for 10,000 people</p>
+    </div>
+  </div>
+  <nav>
+    <a routerLink="/insights" routerLinkActive="active">Pay insights</a>
+    <a routerLink="/employees" routerLinkActive="active">Employees</a>
+  </nav>
+  <div class="persona">
+    <span class="dot"></span>
+    {{ persona }}
+  </div>
+</header>
+<main class="page">
+  <router-outlet></router-outlet>
+</main>

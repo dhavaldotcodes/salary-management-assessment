@@ -1,0 +1,69 @@
+<section class="intro">
+  <div>
+    <a routerLink="/employees" class="back">← All employees</a>
+    <h1>{{ isEdit ? 'Edit compensation' : 'Add employee' }}</h1>
+    <p class="lede">Enter local-currency amounts. USD equivalents are calculated by the API.</p>
+  </div>
+</section>
+
+<p class="banner error" *ngIf="error">{{ error }}</p>
+<p class="banner" *ngIf="loading && isEdit">Loading employee…</p>
+
+<form class="card form" [formGroup]="form" (ngSubmit)="save()">
+  <div class="row">
+    <label>First name
+      <input formControlName="firstName">
+    </label>
+    <label>Last name
+      <input formControlName="lastName">
+    </label>
+  </div>
+  <label>Work email
+    <input type="email" formControlName="email">
+  </label>
+  <div class="row">
+    <label>Country
+      <select formControlName="country">
+        <option *ngFor="let item of lookups.countries" [value]="item">{{ item }}</option>
+      </select>
+    </label>
+    <label>Department
+      <select formControlName="department">
+        <option *ngFor="let item of lookups.departments" [value]="item">{{ item }}</option>
+      </select>
+    </label>
+    <label>Job level
+      <select formControlName="jobLevel">
+        <option *ngFor="let item of (lookups.jobLevels.length ? lookups.jobLevels : fallbackLevels)" [value]="item">{{ item }}</option>
+      </select>
+    </label>
+  </div>
+  <div class="row">
+    <label>Base salary (local)
+      <input type="number" formControlName="baseSalary" min="0" step="0.01">
+    </label>
+    <label>Currency
+      <select formControlName="currency">
+        <option *ngFor="let item of lookups.currencies" [value]="item">{{ item }}</option>
+      </select>
+    </label>
+    <label>Bonus (local)
+      <input type="number" formControlName="bonus" min="0" step="0.01">
+    </label>
+  </div>
+  <div class="row">
+    <label>Effective date
+      <input type="date" formControlName="effectiveDate">
+    </label>
+    <label *ngIf="isEdit">Status
+      <select formControlName="status">
+        <option value="ACTIVE">Active</option>
+        <option value="INACTIVE">Inactive</option>
+      </select>
+    </label>
+  </div>
+  <div class="actions">
+    <button type="submit" class="btn primary" [disabled]="loading">{{ isEdit ? 'Save changes' : 'Create employee' }}</button>
+    <a routerLink="/employees">Cancel</a>
+  </div>
+</form>

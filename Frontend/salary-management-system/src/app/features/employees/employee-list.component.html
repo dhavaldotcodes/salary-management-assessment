@@ -1,0 +1,74 @@
+<section class="intro">
+  <div>
+    <p class="eyebrow">Replace the spreadsheet</p>
+    <h1>Employees</h1>
+    <p class="lede">Search, filter and correct current compensation. The table is paged — we never load all 10,000 rows into the browser.</p>
+  </div>
+  <a class="btn primary" routerLink="/employees/new">Add employee</a>
+</section>
+
+<p class="banner error" *ngIf="error">{{ error }}</p>
+<p class="banner ok" *ngIf="notice">{{ notice }}</p>
+
+<form class="filters" (submit)="$event.preventDefault()">
+  <input type="search" placeholder="Search name, email or ACME code" (input)="onSearch($any($event.target).value)">
+  <select [(ngModel)]="country" name="country" (change)="onFilterChange()">
+    <option value="">All countries</option>
+    <option *ngFor="let item of lookups.countries" [value]="item">{{ item }}</option>
+  </select>
+  <select [(ngModel)]="department" name="department" (change)="onFilterChange()">
+    <option value="">All departments</option>
+    <option *ngFor="let item of lookups.departments" [value]="item">{{ item }}</option>
+  </select>
+  <select [(ngModel)]="jobLevel" name="jobLevel" (change)="onFilterChange()">
+    <option value="">All levels</option>
+    <option *ngFor="let item of lookups.jobLevels" [value]="item">{{ item }}</option>
+  </select>
+  <select [(ngModel)]="status" name="status" (change)="onFilterChange()">
+    <option value="">All statuses</option>
+    <option value="ACTIVE">Active</option>
+    <option value="INACTIVE">Inactive</option>
+  </select>
+</form>
+
+<div class="card table-wrap">
+  <p class="meta" *ngIf="!loading">{{ totalElements | number }} people match these filters</p>
+  <p class="meta" *ngIf="loading">Loading…</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Employee</th>
+        <th>Org</th>
+        <th>Local pay</th>
+        <th>USD (approx.)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let employee of employees">
+        <td>
+          <a [routerLink]="['/employees', employee.id]">{{ employee.firstName }} {{ employee.lastName }}</a>
+          <div class="muted">{{ employee.employeeCode }} · {{ employee.email }}</div>
+        </td>
+        <td>
+          {{ employee.country }} · {{ employee.department }}
+          <div class="muted">{{ employee.jobLevel }} · {{ employee.status }}</div>
+        </td>
+        <td>{{ money(employee.baseSalary, employee.currency) }}</td>
+        <td>{{ usd(employee.totalCompensationUsd) }}</td>
+        <td class="actions">
+          <a [routerLink]="['/employees', employee.id]">Edit</a>
+          <button type="button" class="link" *ngIf="employee.status === 'ACTIVE'" (click)="deactivate(employee)">Deactivate</button>
+        </td>
+      </tr>
+      <tr *ngIf="!loading && employees.length === 0">
+        <td colspan="5" class="muted">No employees match.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="pager">
+    <button type="button" (click)="prev()" [disabled]="page === 0">Previous</button>
+    <span>Page {{ page + 1 }} of {{ totalPages }}</span>
+    <button type="button" (click)="next()" [disabled]="page + 1 >= totalPages">Next</button>
+  </div>
+</div>
